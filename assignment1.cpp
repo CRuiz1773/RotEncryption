@@ -9,8 +9,9 @@ void executeChoice(int choice,vector<string>& o,vector<string>& encRot,vector<st
 void convert(string& s);
 void printEncryptRot(vector<string>& o);
 void printDecryptRot(vector<string>& o);
-vector<string> setFile();//Places encryptedCrypto file into a vector
-vector<string> getInfo();//Places orignal text into a vector
+string getFile(); //Takes in the file name from the user
+vector<string> setFile(string file);//Places encryptedCrypto file into a vector
+vector<string> getInfo(string file);//Places orignal text into a vector
 vector<string> setInfo();//places encryptedRot file into vector
 void rotEncrypt(int key,vector<string>& o);//Encrypts using rot method
 void rotDecrypt(int key,vector<string>& o);//Decrypts using rot method
@@ -20,8 +21,9 @@ int main()
   vector<string> original;
   vector<string> encRot;
   vector<string> encCrypt;
-  original = getInfo();//Original.txt
-  encCrypt = setFile(); //EncryptCrypto.txt
+  string file = getFile();
+  original = getInfo(file);//Original.txt
+  encCrypt = setFile(file); //EncryptCrypto.txt
   encRot = setInfo();
   int choice = menu();
   executeChoice(choice,original,encRot,encCrypt);
@@ -61,12 +63,28 @@ void executeChoice(int choice,vector<string>& o,vector<string>& encRot,vector<st
     }
 }
 
-vector<string> setFile()
+string getFile()
 {
-   string s;
+  string file;
+  cout<<"Enter the file to be encrypted (Format: file.txt): ";
+  fstream x;
+  x.open(file,ios::in);
+  if(!x)
+    {
+      cout<<"There was an error opening the file."<<endl
+	  <<"Make sure the text file is in the same folder as the program."<<endl;
+    }
+  else
+    return file;
+  x.close();
+}
+
+vector<string> setFile(string file)
+{
+  string s;
   vector<string> d;
   ifstream fin;
-  fin.open("EncryptCrypto.txt");
+  fin.open(file);
   fin>>s;
   while(fin)
     {
@@ -78,14 +96,17 @@ vector<string> setFile()
   return d;
 }
 
-vector<string> getInfo()
+vector<string> getInfo(string file)
 {
-  string s,file;
+  string s;
   vector<string> o;
   ifstream fin;
   cout<<"Enter the file to be encrypted(Format: Test.txt): ";
   cin>>file;
-  fin.open(file);
+  fin.open(file, ios::in);
+  if(!fin)
+    cout<<"There was an error opening the file"<<endl
+	<<"Make sure the file is in the same folder as the program"<<endl;
   fin>>s;
   while(fin)
     {
@@ -110,7 +131,7 @@ vector<string> setInfo()
       convert(s);
       o.push_back(s);
       fin>>s;
-      }
+    }
   return o;
 }
 
@@ -125,7 +146,7 @@ void convert(string& s)
 void printDecryptRot(vector<string>& o)
 {
   ofstream fout;
-  fout.open("DecryptRot.txt");
+  fout.open("file");
   for(int i = 0;i < o.size();i++)
     {
       fout<<o[i]<<" ";
