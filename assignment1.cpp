@@ -5,14 +5,12 @@
 using namespace std;
 
 int menu();
-void executeChoice(int choice,vector<string>& o,vector<string>& encRot,vector<string>& encCrypto, string file);
+void executeChoice(int choice,vector<string>& o,string file);
 void convert(string& s);
 void printEncryptRot(vector<string>& o, string file);
 void printDecryptRot(vector<string>& o, string file);
 string getFile(); //Takes in the file name from the user
-vector<string> setFile(string file);//Places encryptedCrypto file into a vector
-//vector<string> getInfo(string file);//Places orignal text into a vector
-vector<string> setInfo();//places encryptedRot file into vector
+vector<string> getInfo(string file);//Places orignal text into a vector
 void rotEncrypt(int key,vector<string>& o);//Encrypts using rot method
 void rotDecrypt(int key,vector<string>& o);//Decrypts using rot method
 
@@ -23,10 +21,8 @@ int main()
   vector<string> encCrypt;
   string file = getFile(); //File the user wants to be encrypted or decrypted
   original = getInfo(file);//Original.txt
-  encCrypt = setFile(file); //EncryptCrypto.txt
-  encRot = setInfo();
   int choice = menu();
-  executeChoice(choice,original,encRot,encCrypt,file);
+  executeChoice(choice,original,file);
   
   return 0;
 }
@@ -41,7 +37,7 @@ int menu()
   return choice;
 }
 
-void executeChoice(int choice,vector<string>& o,vector<string>& encRot,vector<string>& encCrypto, string file)
+void executeChoice(int choice,vector<string>& o,string file)
 {
   int key;
   string crypto;
@@ -72,33 +68,11 @@ string getFile()
   return file;
 }
 
-vector<string> setFile(string file)
-{
-  string s;
-  vector<string> d;
-  ifstream fin;
-  fin.open(file,ios::in);
-  if(!fin)
-    cout<<"There was an error opening the file."<<endl
-	<<"Make sure the file is in the same folder as the program."<<endl; 
-  fin>>s;
-  while(fin)
-    {
-      d.push_back(s);
-      fin>>s;
-    }
-  fin.close();
-  
-  return d;
-}
-
 vector<string> getInfo(string file)
 {
   string s;
   vector<string> o;
   ifstream fin;
-  // cout<<"Enter the file to be encrypted(Format: Test.txt): ";
-  //cin>>file;
   fin.open(file, ios::in);
   if(!fin)
     cout<<"There was an error opening the file"<<endl
@@ -112,22 +86,6 @@ vector<string> getInfo(string file)
     }
   fin.close();
   
-  return o;
-}
-
-vector<string> setInfo()
-{
-  string s;
-  vector<string> o;
-  ifstream fin;
-  fin.open("EncryptRot.txt");
-  fin>>s;
-  while(fin)
-    {
-      convert(s);
-      o.push_back(s);
-      fin>>s;
-    }
   return o;
 }
 
@@ -161,33 +119,36 @@ void rotEncrypt(int key,vector<string>& o)
       s = o[i];
       for(int j = 0;j < s.size();j++)
 	{
+	  if(s[j] == '?' || s[j] == '.' || s[j] == ',' || s[j] == '!' || s[j] == ';' || s[j] == ':')
+	    break;
 	  s[j] += key;
 	  if(s[j] > 'z')
 	    s[j] -= 26;
 	}
       o[i] = s;
-    }  
-  //printEncryptRot(o);
- 
+    }
 }
 
 void rotDecrypt(int key,vector<string>& o)
 {
   string s;
   int newchar;
+  char x;
   for(int i = 0;i < o.size();i++)
     {
       s = o[i];
       for(int j = 0;j < s.size();j++)
 	{
-	   s[j] -= key;
-	   if(s[j] < 'a')
-	     s[j] += 26; 
+	  x = s[j];
+	  if(s[j] == '?' || s[j] == '.' || s[j] == ',' || s[j] == '!' || s[j] == ';' || s[j] == ':')
+	      break;
+	  s[j] -= key;
+	  if(s[j] < 'a')
+	    s[j] += 26;
 	}
       o[i] = s; 
     }
-  //printDecryptRot(o);
- 
+
 }
 
 void printEncryptRot(vector<string>& o, string file)
